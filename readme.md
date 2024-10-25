@@ -1,1 +1,1 @@
-# My SQL Functions"# my-sql-snippets" 
+# My SQL Functions 
