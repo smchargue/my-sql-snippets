@@ -1,0 +1,27 @@
+-- Create a temporary table to store the results
+CREATE TABLE #OrphanedReferences (
+    MirrorTableName NVARCHAR(MAX),
+    IsOrphaned INT
+);
+
+-- Iterate through each row in the table with MirrorTableName
+INSERT INTO #OrphanedReferences (MirrorTableName, IsOrphaned)
+SELECT 
+    MirrorTableName,
+    CASE 
+        WHEN NOT EXISTS (
+            SELECT 1 
+            FROM information_schema.tables 
+            WHERE table_name = MirrorTableName
+        ) THEN 1 -- Orphaned reference
+        ELSE 0 -- Reference exists
+    END AS IsOrphaned
+FROM YourTableName; -- Replace 'YourTableName' with the actual table name
+
+-- View the orphaned references
+SELECT MirrorTableName 
+FROM #OrphanedReferences 
+WHERE IsOrphaned = 1;
+
+-- Clean up the temporary table
+DROP TABLE #OrphanedReferences;
